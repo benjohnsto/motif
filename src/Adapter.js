@@ -1,73 +1,55 @@
 export default class Adapter {
 
-  constructor(main, endpoint) {
-    this.main = main;
+  constructor(annotationPageId, endpoint) {
+    this.annotationPageId = annotationPageId;
     this.endpoint = endpoint;
   }
 
 
-  async get(canvas) {
-    console.log('getting annotations');
-        
-    return fetch(`${this.endpoint}?canvas=${canvas}`, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'GET',
-    }).then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    }).then(data => {
-	     return data;
-    })
-    .catch(() => this.all()); 
-  
-/*  
-    return (await fetch(`${this.endpoint}?canvas=${canvas}`, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })).json();
-    
-*/     
+  async get() {
+    const annotationPage = await this.all();
+    if (annotationPage) {
+      return annotationPage;
+    }
+    return null;
   }
  
   
 
   async create(annotation) {
-    console.log('creating annotation');
-    return fetch(this.endpoint, {
-      body: JSON.stringify(annotation),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    })
-    .catch(() => this.all());
+    const emptyAnnoPage = {
+      id: this.annotationPageId,
+      items: [],
+      type: 'AnnotationPage',
+    };
+    const annotationPage = await this.all() || emptyAnnoPage;
+    
+    annotationPage.items.push(annotation);
+    localStorage.setItem(this.annotationPageId, JSON.stringify(annotationPage));
+    console.log('CREATE ANNOTATION', annotationPage);
+    return annotationPage;
   }
   
-  
-  
-  all() {
-  
-  }
-  
-
-
   async update(annotation) {
+
+    const annotationPage = await this.all();
+    if (annotationPage) {
+      const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
+      annotationPage.items.splice(currentIndex, 1, annotation);
+      localStorage.setItem(this.annotationPageId, JSON.stringify(annotationPage));
+      console.log('UPDATE ANNOTATION', annotationPage);
+      return annotationPage;
+    }
+    return null;
+    
+    
+    
+  /*
       console.log('Updating annotation...');
       var headers = {
            'Content-Type': 'application/json'
       }
       
-      if(this.main.config.nonce) {
-        headers['X-WP-Nonce'] = this.main.config.nonce
-      }
 
       fetch(this.endpoint, { 
         method: 'PUT', 
@@ -79,9 +61,9 @@ export default class Adapter {
         }
         return response.json();
       }).then(data => {
-	     //this.main.sidebar.drawAnnotations(data);
 	     console.log('finished updating');
-      }).catch(error => console.error('Error:', error));   
+      }).catch(error => console.error('Error:', error)); 
+    */  
   }
   
   
@@ -89,18 +71,20 @@ export default class Adapter {
   
 
 
-  async remove(annoid) {
-    var id = annoid.replace(`${this.endpoint}/`,"");
-
-    fetch(`${this.endpoint}/${id}`, { method: 'DELETE' })
-      .then(response => response.json())
-      .then(data => {
-          this.main.viewer.annotationPage = data;
-          this.main.viewer.osd.clearOverlays();
-          this.main.viewer.drawOverlays();
-          this.main.sidebar.close();
-    }).catch(error => console.error('Error:', error));      
-   
+  async remove(annoId) {
+    const annotationPage = await this.all();
+    if (annotationPage) {
+      console.log(annotationPage.items);
+      annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
+      console.log(annotationPage.items);
+    }
+    localStorage.setItem(this.annotationPageId, JSON.stringify(annotationPage));
+    return annotationPage;
+  }
+  
+  /** */
+  async all() {
+    return JSON.parse(localStorage.getItem(this.annotationPageId));
   }
 
 }

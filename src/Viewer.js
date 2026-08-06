@@ -139,8 +139,6 @@ export default class Viewer {
     
     open(item) {
       this.currentItem = item;
-      //console.log(item.canvas);
-      //console.log(this.annotationPage);
       this.main.viewer.setAnnotations(item.canvas);
       this.osd.open(item.service + "/info.json");
       this.main.sidebar.close();
@@ -213,14 +211,14 @@ export default class Viewer {
        
     
     drawOverlay(anno) {
+        
         var id = anno.id;
         var region = anno.target.selector.value.replace('xywh=pixel:','').replace('xywh=','').split(',').map((x)=>{return parseInt(x)});
-
         var overlayElement = document.createElement("div");
         overlayElement.setAttribute("href","#");
-        overlayElement.addEventListener('mouseover', (e) => {});
-        overlayElement.addEventListener('mouseleave', (e) => {});
-
+        overlayElement.addEventListener('mouseover', (e) => {  });
+        overlayElement.addEventListener('mouseleave', (e) => {  });    
+        
         overlayElement.className = "lowlight";
         overlayElement.setAttribute('id',`${id}`);
         overlayElement.setAttribute('rel',`${id}`);
@@ -231,29 +229,28 @@ export default class Viewer {
             element: overlayElement,
             location: viewportRect
         });
-        
 
         /********************************
         * Click on bounding box
-        ********************************/
+        ********************************/ 
 	new OpenSeadragon.MouseTracker({
 	   element: overlayElement,
            clickHandler: (event) => {
                 // Prevent OSD from interpreting this as a canvas click/zoom
                 event.preventDefaultAction = true;
                 const rel = event.originalTarget.getAttribute('rel');
-		//this.main.sidebar.list();
-		console.log(this.annotationPage);
 		this.main.sidebar.showAnnotation(rel);
 	   }
-	});  
+	}); 
+	
 
     }
     
+    
     drawOverlays() {
        this.osd.clearOverlays();
-       for(var i in this.annotationPage) {
-         this.drawOverlay(this.annotationPage[i]);
+       for(var i in this.annotationPage.items) {
+         this.drawOverlay(this.annotationPage.items[i]);
        }
     }
     
@@ -268,20 +265,18 @@ export default class Viewer {
       if(this.main.config.annotation.endpoint) {
         //this.osd.clearOverlays();
 	try {
-	
-	/*
-	    this.annotationPage = await this.main.adapter.get(canvas).then((data) => {
-	       console.log(data);
-	       this.annotationPage = data;
-	       this.drawOverlays();
-	    });
-          */  
-            await this.main.adapter.get(canvas).then((data) => {
-              console.log(data);
-               this.annotationPage = data;
-               this.drawOverlays();
-            });
-	    
+
+             if(this.main.adapter) {
+              this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
+              this.annotationPage = await this.main.adapter.get();
+              if(this.annotationPage) {
+                   const myTimeout = setTimeout(() => { 
+                     this.drawOverlays();
+                    }, 500);
+
+              }
+
+             }
             
 	  } catch (error) {
 	    // Handles network errors or the HTTP errors thrown from response.ok
@@ -302,7 +297,6 @@ export default class Viewer {
         if(rotation < 0) { rotation = 270; }
         this.osd.viewport.setRotation(rotation);
         this.currentItem.rotation = rotation;
-        //console.log(this.main.viewer.currentItem);
     }
 
     rotateRight() {
@@ -310,7 +304,6 @@ export default class Viewer {
         if(rotation >= 360) { rotation = 0; }
         this.osd.viewport.setRotation(rotation);
         this.currentItem.rotation = rotation;
-        //console.log(this.main.viewer.currentItem);
     }
     
     

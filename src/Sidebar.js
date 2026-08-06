@@ -19,10 +19,8 @@ export default class Sidebar {
     
 
     create() {
-         console.log(this.main.viewer.annotation);
          var region = this.main.viewer.annotation.target.selector.value.replace('xywh=','').split(',');
          var rotation = this.main.viewer.currentItem.rotation;
-         console.log(this.main.viewer.currentItem);
          var image = `${this.main.viewer.currentItem.service}/${region}/,300/${rotation}/default.jpg`;
          document.getElementById('canvasUri').value = this.main.viewer.currentItem.canvas;
          document.getElementById('annoText').value = this.main.viewer.annotation.body[0].value;
@@ -33,8 +31,11 @@ export default class Sidebar {
          this.open();       
     }
     
-    edit(anno) {
-         console.log('open editing panel');
+    
+    
+    
+    editAnnotation(anno) {
+
          this.main.viewer.annotation = anno;
          var text = anno.body[0].value.replaceAll("<br />","\n");
          var tags = [];
@@ -54,6 +55,10 @@ export default class Sidebar {
          document.getElementById("annoSubmit").innerText = "Update";
          this.open();       
     }
+    
+    
+    
+    
     
     list() {
          document.getElementById(`annoForm`).style.display = "none";
@@ -88,13 +93,15 @@ export default class Sidebar {
     
     showAnnotation(id) {
       document.getElementById(`annoList`).innerHTML = "";
-      console.log(this.main.viewer.annotationPage);
-      for(var i in this.main.viewer.annotationPage) {
-        if(this.main.viewer.annotationPage[i].id == id) { 
-           this.drawAnnotation(this.main.viewer.annotationPage[i]);
+      var items = this.main.viewer.annotationPage.items;
+      for(var i in items) {
+
+        if(id == items[i].id) {
+           this.drawAnnotation(items[i]);
            this.list();
            this.open();
         }
+
       }
     }
 
@@ -161,13 +168,20 @@ export default class Sidebar {
 		
 		editicon.addEventListener('click', (e) => {
 		  var id = e.currentTarget.getAttribute('data-id');
-		  for(var i in this.main.viewer.annotationPage) {
-		    if(this.main.viewer.annotationPage[i].id == id) {
-		      var anno = this.main.viewer.annotationPage[i];
-		      this.edit(anno);
+		  
+		  var items = this.main.viewer.annotationPage.items;
+		  
+		  for(var i in items) {
+		    if(items[i].id == id) {
+		      var anno = items[i];
+		      this.editAnnotation(anno);
 		    }
 		  }
 		});
+		
+		
+		
+		
 		const removeicon = document.createElement("img");
 		removeicon.setAttribute('src',remove);
 		removeicon.setAttribute('data-id',anno.id);
@@ -183,6 +197,8 @@ export default class Sidebar {
 	document.getElementById(`annoList`).appendChild(newanno); 
 
     }
+    
+    
 
     
     htmlConvert(str) {
@@ -230,13 +246,23 @@ export default class Sidebar {
                 this.main.viewer.annotation.body.push(o);
               }
           }
+          
+          console.log(tags);
 
           if(id == "") {
-            await this.main.adapter.create(this.main.viewer.annotation);
+             if(this.main.adapter) {
+              this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
+              await this.main.adapter.create(this.main.viewer.annotation);
+             }
           }
           else {
-            await this.main.adapter.update(this.main.viewer.annotation);
+             if(this.main.adapter) {
+              this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
+              await this.main.adapter.update(this.main.viewer.annotation);
+             }
           }
+          
+          console.log(this.main.viewer.annotation);
 
 	  this.main.sidebar.close();
 	  this.main.viewer.setAnnotations(this.main.viewer.currentItem.canvas);
@@ -246,11 +272,12 @@ export default class Sidebar {
     
     
     async deleteAnnotation(id) {
-         if(confirm('Are you sure?')) {
-           await this.main.adapter.remove(id).then((data) => {
-                
-           });
-         }
+        if(confirm('Are you sure?')) {
+           this.main.viewer.annotationPage = await this.main.adapter.remove(id);
+          // this.main.viewer.osd.clearOverlays();
+           this.main.viewer.drawOverlays();
+           this.close();
+        }
     }
     
 
