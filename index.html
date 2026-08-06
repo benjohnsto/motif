@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenSeadragon Class</title>
+    
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <style>
+    #gallery {
+      margin-top:2em;
+      display:grid;
+      grid-template-columns: repeat(5, 10rem); 
+      grid-template-rows: 10rem; 
+      grid-gap:0.5em;
+    } 
+    .block{
+     background:#EEE;
+     padding:1em;
+    }
+    </style>
+</head>
+<body>
+<div id="myviewer" style="width:1200px;height:800px;display:block;"></div>
+
+<script src="dist/main.js?v=2"></script>
+
+<script>
+  var c = new WPAnnotator({
+    'id':'myviewer',
+    'mode': 'edit',
+    'manifest': 'https://figgy.princeton.edu/concern/ephemera_folders/ac4d30fe-b4da-478f-b2f7-c65e568551a4/manifest',
+    'annotation': {
+      'endpoint':'http://localhost/wordpress/wp-json/iiif/v1/annotations',
+      'creator': 'Ben Johnston'
+     }        
+      });
+</script>
+    
+    
+</body>
+</html>
+

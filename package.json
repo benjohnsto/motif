@@ -1,0 +1,26 @@
+{
+  "name": "my-osd-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --open --mode development",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@annotorious/openseadragon": "^3.8.3",
+    "manifesto.js": "^4.3.2",
+    "openseadragon": "^5.0.1"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.4",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.4"
+  }
+}

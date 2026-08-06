@@ -1,0 +1,118 @@
+
+.highlight {background:rgba(255, 0, 0, 0.3);cursor:pointer;}
+.lowlight {background:rgba(0, 0, 0, 0.2);border: solid 2px oldlace;}
+
+.viewer { width:100%;transition: width 1s; }
+
+.panel { 
+  position: absolute;
+  right: -30%;
+  width: 30%;
+  top:0;
+  bottom:0;
+  transition: right 1s;
+ }
+.viewer.split { width:70%;transition: width 1s; }
+.panel.split { right: 0%; transition: right 1s; }
+
+
+.panel.shown { display:block; }
+
+#previewImg { margin-bottom:1em;text-align:center; }
+#preview { max-height:95%;max-width:95%;box-shadow: 0 0 5px #444;border-radius:3px; }
+.imageFrame { margin-bottom:1em;text-align:center; }
+.image { max-height:95%;max-width:95%;box-shadow: 0 0 5px #444;border-radius:3px;  }
+
+
+.tile { 
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  margin-right:1px;
+ }
+ .tile img { 
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow:0 0 5px #444;
+ }
+ .tile.active img { 
+  border: solid 2px red;
+ } 
+.tile.active {}
+
+.counter {
+  position: absolute;
+  right: 0;
+  background: black;
+  color:white;
+  padding: 4px 8px;
+  border-radius: 2em;
+}
+
+
+#annoForm {
+  display:none;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1em;
+  background: #DDD;
+  border-radius: 20px;
+}
+#annoForm.shown {display:flex;}
+
+
+
+#annoForm textarea,
+#annoForm input { padding:1em;border: none; border-radius: 10px; }
+
+#annoList {
+  display: none;
+  flex-direction: column;
+  gap: 0.5em;
+  padding:0.2em;
+}
+#annoList.shown { display: flex; }
+
+
+.button { 
+  background:black;
+  padding:0.4em 1em;
+  border-radius:4px;
+  color:white;
+}
+
+.annotools {
+    margin: 10px 0 0;
+    text-align:right;
+}
+.annotools img { margin:4px; }
+
+
+.annotation {
+  color: #444;
+  cursor: pointer;
+  margin: 0px;
+  padding:2em 2em 1em;
+  text-align: left;
+  outline: none;
+  transition: 0.4s;
+  display: flex;
+  flex-direction: column;
+  background: #DDD;
+  background-color: rgba(221, 221, 221, 0.5);
+  border-radius: 20px;
+}
+.annotation.selected { background-color: #ccc; }
+
+#annoSubmit {
+  cursor:pointer;
+}
+
+.annotation:hover {
+  background-color: #eee;
+}
+
+.tags { margin: 1em 0;}
+.tag { background:black;padding:0.3em 0.7em;margin-right:4px;border-radius:30px;color:white;font-size:0.85em; }
