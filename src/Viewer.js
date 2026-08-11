@@ -273,9 +273,7 @@ export default class Viewer {
                    const myTimeout = setTimeout(() => { 
                      this.drawOverlays();
                     }, 500);
-
               }
-
              }
             
 	  } catch (error) {

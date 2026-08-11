@@ -1,4 +1,4 @@
-export default class Adapter {
+export default class LocalStorageAdapter {
 
   constructor(annotationPageId, endpoint) {
     this.annotationPageId = annotationPageId;

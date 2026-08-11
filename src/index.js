@@ -4,7 +4,7 @@ import * as manifesto from "manifesto.js";
 import Viewer from './Viewer';
 import Strip from './Strip';
 import Sidebar from './Sidebar';
-import Adapter from './Adapter';
+//import Adapter from './Adapter';
 
 // Don't forget to import the required CSS for the annotation layer UI
 import '@annotorious/openseadragon/annotorious-openseadragon.css';
@@ -36,7 +36,8 @@ class WPAnnotator {
         this.sidebar = new Sidebar(this);
 
         if(config.annotation.endpoint) {
-          this.adapter = new Adapter( this, config.annotation.endpoint );
+          this.loadAdapter();
+          //this.adapter = new Adapter( this, config.annotation.endpoint );
         }
         if(config.annotation.creator) {
           this.viewer.annotationTemplate.creator = config.annotation.creator;
@@ -61,6 +62,14 @@ class WPAnnotator {
             });          
 
 
+    }
+    
+    async loadAdapter() {
+      //console.log(this.config.annotation.adapter);
+      
+      var path = `${this.config.annotation.adapter}`;
+      this.adapterModule = await import('./LocalStorageAdapter');
+      this.adapter = new this.adapterModule.default("",this.config.annotation.endpoint); 
     }
 
     initUI() {
