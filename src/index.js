@@ -205,6 +205,22 @@ class WPAnnotator {
             throw error; // Re-throw so the caller knows it failed
         });
       }
+      
+      
+      domElement(element, id, attr, appendTo = null, innerHTML = null) {
+         var r = document.createElement(element);
+         if(id !== null) { r.id = id; }
+         for(var i in attr) {
+            if(i == "class") { r.classList.add(attr[i]); }
+            else { r.setAttribute(i, attr[i]); }
+         }
+         if(innerHTML) { r.innerHTML = innerHTML; }
+         if(appendTo) { appendTo.appendChild(r); }
+         return r;
+      }
+      
+      
+      
      }
 
 

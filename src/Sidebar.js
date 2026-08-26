@@ -162,11 +162,14 @@ export default class Sidebar {
 		newanno.appendChild(tools);
 		
 		// populate tools
-		const editicon = document.createElement("img");
-		editicon.setAttribute('src',edit);
-		editicon.setAttribute('data-id',anno.id);
+					
+		const editlink = this.main.domElement("a", null, {"href":"#","class":"annoedit","data-id":anno.id}, tools);
+                const editicon = this.main.domElement("img", null, {"src": edit}, editlink);
+		const deletelink = this.main.domElement("a", null, {"href":"#","data-id":anno.id}, tools);
+                const deleteicon = this.main.domElement("img", null, {"src": remove}, deletelink);
 		
-		editicon.addEventListener('click', (e) => {
+		editlink.addEventListener('click', (e) => {
+		  console.log("clickt");
 		  var id = e.currentTarget.getAttribute('data-id');
 		  
 		  var items = this.main.viewer.annotationPage.items;
@@ -178,19 +181,12 @@ export default class Sidebar {
 		    }
 		  }
 		});
-		
-		
-		
-		
-		const removeicon = document.createElement("img");
-		removeicon.setAttribute('src',remove);
-		removeicon.setAttribute('data-id',anno.id);
-		removeicon.addEventListener('click', (e) => {
+
+		deletelink.addEventListener('click', (e) => {
 		  var id = e.currentTarget.getAttribute('data-id');
 		  this.deleteAnnotation(id);
-		});		
-		tools.appendChild(editicon);
-		tools.appendChild(removeicon);
+		});
+
 	} // end if mode = edit
 
 	// append to main list		
