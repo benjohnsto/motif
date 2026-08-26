@@ -11,6 +11,7 @@
   top:0;
   bottom:0;
   transition: right 1s;
+  background: #f7f7f7;
  }
 .viewer.split { width:70%;transition: width 1s; }
 .panel.split { right: 0%; transition: right 1s; }
@@ -100,9 +101,6 @@
   transition: 0.4s;
   display: flex;
   flex-direction: column;
-  background: #DDD;
-  background-color: rgba(221, 221, 221, 0.5);
-  border-radius: 20px;
 }
 .annotation.selected { background-color: #ccc; }
 

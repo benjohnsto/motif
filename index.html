@@ -26,10 +26,12 @@
 <script src="dist/main.js?v=2"></script>
 
 <script>
+//https://data.artmuseum.princeton.edu/iiif/objects/32499
+
   var c = new WPAnnotator({
     'id':'myviewer',
-    'mode': 'edit',
-    'manifest': 'https://data.artmuseum.princeton.edu/iiif/objects/32499',
+    'mode': 'view',
+    'manifest': 'https://figgy.princeton.edu/concern/scanned_resources/44b1566d-fad0-48c4-ad91-db9662fbb5c1/manifest',
     'annotation': {
       'adapter': 'LocalStorageAdapter',
       'endpoint':'http://localhost/wordpress/wp-json/iiif/v1/annotations',

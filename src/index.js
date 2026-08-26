@@ -105,7 +105,8 @@ class WPAnnotator {
 	// panel toolbar
         const tt = document.createElement("div");
         tt.id = `${this.divId}_panel_toolbar`;
-        tt.style['text-align'] = "right";
+        tt.style['position'] = "absolute";
+        tt.style.right = "0px";
         const close_tp = document.createElement("img");
         close_tp.src = close;
         close_tp.style.padding = "8px";
