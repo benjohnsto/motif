@@ -58,8 +58,6 @@
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
-  background: #DDD;
-  border-radius: 20px;
 }
 #annoForm.shown {display:flex;}
 
