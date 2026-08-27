@@ -41,29 +41,6 @@ export default class LocalStorageAdapter {
       return annotationPage;
     }
     return null;
-    
-    
-    
-  /*
-      console.log('Updating annotation...');
-      var headers = {
-           'Content-Type': 'application/json'
-      }
-      
-
-      fetch(this.endpoint, { 
-        method: 'PUT', 
-        headers: headers,
-        body: JSON.stringify(annotation) 
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      }).then(data => {
-	     console.log('finished updating');
-      }).catch(error => console.error('Error:', error)); 
-    */  
   }
   
   
@@ -74,9 +51,7 @@ export default class LocalStorageAdapter {
   async remove(annoId) {
     const annotationPage = await this.all();
     if (annotationPage) {
-      console.log(annotationPage.items);
       annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
-      console.log(annotationPage.items);
     }
     localStorage.setItem(this.annotationPageId, JSON.stringify(annotationPage));
     return annotationPage;

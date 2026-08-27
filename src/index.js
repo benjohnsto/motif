@@ -68,7 +68,7 @@ class WPAnnotator {
       //console.log(this.config.annotation.adapter);
       
       var path = `${this.config.annotation.adapter}`;
-      this.adapterModule = await import('./LocalStorageAdapter');
+      this.adapterModule = await import(`./${path}`);
       this.adapter = new this.adapterModule.default("",this.config.annotation.endpoint); 
     }
 

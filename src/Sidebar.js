@@ -169,7 +169,6 @@ export default class Sidebar {
                 const deleteicon = this.main.domElement("img", null, {"src": remove}, deletelink);
 		
 		editlink.addEventListener('click', (e) => {
-		  console.log("clickt");
 		  var id = e.currentTarget.getAttribute('data-id');
 		  
 		  var items = this.main.viewer.annotationPage.items;
@@ -242,8 +241,7 @@ export default class Sidebar {
                 this.main.viewer.annotation.body.push(o);
               }
           }
-          
-          console.log(tags);
+
 
           if(id == "") {
              if(this.main.adapter) {
@@ -257,8 +255,6 @@ export default class Sidebar {
               await this.main.adapter.update(this.main.viewer.annotation);
              }
           }
-          
-          console.log(this.main.viewer.annotation);
 
 	  this.main.sidebar.close();
 	  this.main.viewer.setAnnotations(this.main.viewer.currentItem.canvas);

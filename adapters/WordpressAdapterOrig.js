@@ -8,7 +8,7 @@ export default class Adapter {
 
   async get(canvas) {
     console.log('getting annotations');
-        
+     console.log(`${this.endpoint}?canvas=${canvas}`);   
     return fetch(`${this.endpoint}?canvas=${canvas}`, {
       headers: {
         Accept: 'application/json',
