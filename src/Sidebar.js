@@ -1,6 +1,3 @@
-import remove from './assets/images/remove.svg';
-import edit from './assets/images/edit.svg';
-import check from './assets/images/check.svg';
 
 
 export default class Sidebar {
@@ -164,9 +161,9 @@ export default class Sidebar {
 		// populate tools
 					
 		const editlink = this.main.domElement("a", null, {"href":"#","class":"annoedit","data-id":anno.id}, tools);
-                const editicon = this.main.domElement("img", null, {"src": edit}, editlink);
+                const editicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, editlink);
 		const deletelink = this.main.domElement("a", null, {"href":"#","data-id":anno.id}, tools);
-                const deleteicon = this.main.domElement("img", null, {"src": remove}, deletelink);
+                const deleteicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, deletelink);
 		
 		editlink.addEventListener('click', (e) => {
 		  var id = e.currentTarget.getAttribute('data-id');

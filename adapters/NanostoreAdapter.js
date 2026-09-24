@@ -1,4 +1,4 @@
-export default class Adapter {
+class NanostoreAdapter {
 
   constructor(annotationPageId, endpoint) {
     this.annotationPageId = annotationPageId;
@@ -18,7 +18,7 @@ export default class Adapter {
 
   async create(annotation) {
     console.log('create annotation');
-    return fetch(this.endpoint, {
+    return fetch(`${this.endpoint}/create`, {
       body: JSON.stringify(annotation),
       headers: {
         Accept: 'application/json',
@@ -28,12 +28,14 @@ export default class Adapter {
     }).catch(() => this.all());
   }
   
+  
+  
   async update(annotation) {
     const annotationPage = await this.all();
     if (annotationPage) {
       const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
       annotationPage.items.splice(currentIndex, 1, annotation);
-      return fetch(this.endpoint, {
+      return fetch(`${this.endpoint}/update`, {
         body: JSON.stringify(annotationPage),
           headers: {
           Accept: 'application/json',
@@ -44,34 +46,35 @@ export default class Adapter {
 
     }
     return null;
-    
-    
-    
-    
-    
-    
   }
   
 
 
   async remove(annoId) {
-    const annotationPage = await this.all();
-    if (annotationPage) {
-      annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
-    }
-    localStorage.setItem(this.annotationPageId, JSON.stringify(annotationPage));
-    return annotationPage;
-  }
-  
-  /** */
-  async all() {
-    
-    return fetch(`${this.endpoint}?canvas=${this.annotationPageId}`, {
+    console.log('delete annotation');
+    return fetch(`${this.endpoint}/delete`, {
+      body: JSON.stringify(annotation),
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      method: 'GET',
+      method: 'POST',
+      body: JSON.stringify("id",annoId)
+    }).catch(() => this.all());
+  }
+  
+  
+  
+  /** */
+  async all() {
+    
+    return fetch(`${this.endpoint}/query`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({ "type": "Annotation","target.source": this.annotationPageId })
     }).then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

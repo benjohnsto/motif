@@ -8,15 +8,15 @@ import Sidebar from './Sidebar';
 
 // Don't forget to import the required CSS for the annotation layer UI
 import '@annotorious/openseadragon/annotorious-openseadragon.css';
-import mycss from './assets/css/style.css';
-import close from './assets/images/close.svg';
+//import mycss from './assets/css/style.css';
 
 
-class WPAnnotator {
+class Motif {
 
-    constructor(config) {
+    constructor(config, adapter) {
         this.config = config;
         this.divId = config.id;
+        this.iconpath = "./icons";
         this.wrapper = document.getElementById(config.id);
         this.initUI();
 
@@ -34,7 +34,10 @@ class WPAnnotator {
         this.viewer = new Viewer(this);
         this.strip = new Strip(this);
         this.sidebar = new Sidebar(this);
+        
+        if(adapter) { this.adapter = adapter; }
 
+/*
         if(config.annotation.endpoint) {
           this.loadAdapter();
           //this.adapter = new Adapter( this, config.annotation.endpoint );
@@ -48,7 +51,7 @@ class WPAnnotator {
         if(config.annotation.course) {
           this.viewer.annotationTemplate.course = config.annotation.course;
         }
-
+*/
           this.load(config.manifest)
             .then(() => {
                 this.strip.draw(); 
@@ -63,15 +66,20 @@ class WPAnnotator {
 
 
     }
-    
+/*   
     async loadAdapter() {
-      //console.log(this.config.annotation.adapter);
-      
-      var path = `${this.config.annotation.adapter}`;
-      this.adapterModule = await import(`./${path}`);
-      this.adapter = new this.adapterModule.default("",this.config.annotation.endpoint); 
-    }
+      const className = this.config.annotation.adapter;
+      console.log(window);
+      const AdapterClass = window[className];
 
+      if (typeof AdapterClass !== "function") {
+        throw new TypeError(`Class "${className}" was not found on the window object.`);
+      }
+
+      const adapterInstance = new AdapterClass("", this.config.annotation.endpoint);
+      return adapterInstance;
+    }
+*/
     initUI() {
 
         const t = document.createElement("div");
@@ -108,7 +116,7 @@ class WPAnnotator {
         tt.style['position'] = "absolute";
         tt.style.right = "0px";
         const close_tp = document.createElement("img");
-        close_tp.src = close;
+        close_tp.src = `${this.iconpath}/close.svg`;
         close_tp.style.padding = "8px";
         close_tp.onclick = (event) => {
            this.sidebar.close();
@@ -224,4 +232,4 @@ class WPAnnotator {
      }
 
 
-window.WPAnnotator = WPAnnotator;
+window.Motif = Motif;

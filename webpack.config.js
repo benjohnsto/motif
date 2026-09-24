@@ -4,7 +4,7 @@ module.exports = {
   mode: 'development', // Ensures fast builds and good source maps
   entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'motif.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: 'auto',
     clean: true, // Cleans the dist folder on builds
