@@ -18,13 +18,11 @@ class Motif {
         this.divId = config.id;
         this.iconpath = "./icons";
         this.wrapper = document.getElementById(config.id);
+        this.mode = config.mode === "edit" ? "edit" : "view";
         this.initUI();
 
         if (!this.config.id) { return false; }
         if (!this.config.manifest) { return false; }
-        if(config.mode && config.mode == "edit") { this.mode = "edit"; }
-        else { this.mode = "view"; }
-                console.log(this.mode);
 
         this.manifest = config.manifest;
         this.manifestData = {};
@@ -66,20 +64,7 @@ class Motif {
 
 
     }
-/*   
-    async loadAdapter() {
-      const className = this.config.annotation.adapter;
-      console.log(window);
-      const AdapterClass = window[className];
 
-      if (typeof AdapterClass !== "function") {
-        throw new TypeError(`Class "${className}" was not found on the window object.`);
-      }
-
-      const adapterInstance = new AdapterClass("", this.config.annotation.endpoint);
-      return adapterInstance;
-    }
-*/
     initUI() {
 
         const t = document.createElement("div");
@@ -113,11 +98,10 @@ class Motif {
 	// panel toolbar
         const tt = document.createElement("div");
         tt.id = `${this.divId}_panel_toolbar`;
-        tt.style['position'] = "absolute";
-        tt.style.right = "0px";
+        tt.style['text-align'] = "right";
+        tt.style.padding = "8px";
         const close_tp = document.createElement("img");
         close_tp.src = `${this.iconpath}/close.svg`;
-        close_tp.style.padding = "8px";
         close_tp.onclick = (event) => {
            this.sidebar.close();
            this.viewer.deactivateCrop();
@@ -135,12 +119,11 @@ class Motif {
         const tf = document.createElement("div");
         tf.id = `annoForm`;
         tf.innerHTML = `
-             <div id="previewImg"><img id='preview' src=''/></div>
              <input type='hidden' id='annoId' value='' placeholder='id'/>
              <input type='hidden' id='canvasUri' value=''/>
              <textarea name='text' id='annoText' rows='8'></textarea>
              <input type='text' name='tags' id='annoTags' placeholder='Tags'/>
-             <input type='button' id='annoSubmit' class='button' value='Create'/>
+             <!--<input type='button' id='annoSubmit' class='button' value='Create'/>-->
              `;
         tp.appendChild(tf);
         
@@ -148,7 +131,17 @@ class Motif {
         tal.id = `annoList`;     
         tp.appendChild(tal);
         
-        document.getElementById("annoSubmit").addEventListener("click", (e) => this.sidebar.saveAnnotation(e));
+        
+        
+        // edit annotation tools
+       
+        if(this.mode == 'edit') {
+          const tat = document.createElement("div");
+          tat.id = `annoTools`;
+          tat.style['text-align'] = "right";
+          tat.style['padding'] = "8px";
+          tp.appendChild(tat);
+        }
 
     }
     

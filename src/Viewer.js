@@ -233,7 +233,6 @@ export default class Viewer {
        
     
     drawOverlay(anno) {
-        console.log(anno);
         var id = anno.id;
         var region = anno.target.selector.value.replace('xywh=pixel:','').replace('xywh=','').split(',').map((x)=>{return parseInt(x)});
         var overlayElement = document.createElement("div");

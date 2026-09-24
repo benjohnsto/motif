@@ -4,8 +4,9 @@ export default class Sidebar {
 
     constructor(main) {
         this.main = main;
-        this.mode = 'collection';
-        this.annotations = [];     
+        this.mode = 'view';
+        this.annotations = [];
+        this.ui = {};     
         this.init();
     }
 
@@ -46,10 +47,10 @@ export default class Sidebar {
          document.getElementById('canvasUri').value = anno.target.source;
          document.getElementById('annoText').value = text;
          document.getElementById('annoTags').value = tags.join(",");
-         document.getElementById('preview').setAttribute('src',image);
+         //document.getElementById('preview').setAttribute('src',image);
          document.getElementById(`annoForm`).style.display = "flex";
          document.getElementById(`annoList`).style.display = "none";
-         document.getElementById("annoSubmit").innerText = "Update";
+         //document.getElementById("annoSubmit").innerText = "Update";
          this.open();       
     }
     
@@ -79,7 +80,7 @@ export default class Sidebar {
     }
     
     clearForm() {
-      document.getElementById("preview").setAttribute('src','');
+      //document.getElementById("preview").setAttribute('src','');
       document.getElementById("canvasUri").value = "";
       document.getElementById("annoText").value = "";
       document.getElementById("annoTags").value = "";
@@ -102,6 +103,31 @@ export default class Sidebar {
       }
     }
 
+    toggleSaveEdit() {
+      if(this.mode == 'view') {
+      this.ui.save.style['display'] = "inline-block";
+      this.ui.edit.style['display'] = "none";
+      this.mode = 'edit';
+      }
+      else {
+      this.ui.save.style['display'] = "none";
+      this.ui.edit.style['display'] = "inline-block";
+      this.mode = 'view';
+      }
+    /*
+      var s = document.getElementByID("annosave");
+      var e = document.getElementByID("annoedit");
+      console.log(s,e);
+      if(this.mode == 'edit') {
+        //document.getElementByID("annosave").style.display = "none";
+        //document.getElementByID("annoedit").style.display = "block";
+      }
+      else {
+        //document.getElementByID("annosave").style.display = "block";
+        //document.getElementByID("annoedit").style.display = "none";
+      }
+      */
+    }
 
 
     drawAnnotation(anno) {
@@ -118,19 +144,16 @@ export default class Sidebar {
 	var service = this.main.items[anno.target.source].service;
 	//var region = anno.target.selector.value.replace('xywh=pixel:','').replace('xywh=','').split(',').map((x)=>{return parseInt(x)}).join(',');
 
-	const imgcontainer = document.createElement("div");
-	imgcontainer.classList.add('imageFrame');		
-	newanno.appendChild(imgcontainer);
-	const image = document.createElement("img");
-	image.classList.add('image');
+	////const imgcontainer = document.createElement("div");
+	//imgcontainer.classList.add('imageFrame');		
+	//newanno.appendChild(imgcontainer);
+	//const image = document.createElement("img");
+	//image.classList.add('image');
 	
 	//if(anno.body[1]) { var rotation = anno.body[1].value.split('/')[11]; } else { var rotation = 0; }
 	
-	
-	
-	//image.setAttribute('src',`${service}/${region}/300,/${rotation}/default.jpg`)
-	image.setAttribute("src",anno.body[1].value);	
-	imgcontainer.appendChild(image);
+	//image.setAttribute("src",anno.body[1].value);	
+	//imgcontainer.appendChild(image);
 		
 	const content = document.createElement("div");
 	content.classList.add('annocontent');		
@@ -154,18 +177,28 @@ export default class Sidebar {
 	//if(anno.body.length > 1) { content.innerHTML = anno.body[0].value; }		
 	
 	if(this.main.mode == 'edit') {
-		const tools = document.createElement("div");
-		tools.classList.add('annotools');		
-		newanno.appendChild(tools);
+		const tools = document.getElementById("annoTools");
+		tools.innerHTML = "";
+			
+		//newanno.appendChild(tools);
 		
 		// populate tools
-					
-		const editlink = this.main.domElement("a", null, {"href":"#","class":"annoedit","data-id":anno.id}, tools);
-                const editicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, editlink);
+		this.ui.save = this.main.domElement("a", "annosave", {"href":"#","class":"annosave","data-id":anno.id}, tools);
+		this.ui.save.style.display = "none";
+                const saveicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);			
+		this.ui.edit = this.main.domElement("a", "annoedit", {"href":"#","class":"annoedit","data-id":anno.id}, tools);
+                const editicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, this.ui.edit);
 		const deletelink = this.main.domElement("a", null, {"href":"#","data-id":anno.id}, tools);
                 const deleteicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, deletelink);
 		
-		editlink.addEventListener('click', (e) => {
+		
+		this.ui.save.addEventListener("click", (e) => {
+		  this.saveAnnotation(e);
+		  this.toggleSaveEdit();
+		});
+		  
+		
+		this.ui.edit.addEventListener('click', (e) => {
 		  var id = e.currentTarget.getAttribute('data-id');
 		  
 		  var items = this.main.viewer.annotationPage.items;
@@ -174,6 +207,7 @@ export default class Sidebar {
 		    if(items[i].id == id) {
 		      var anno = items[i];
 		      this.editAnnotation(anno);
+		      this.toggleSaveEdit();
 		    }
 		  }
 		});
@@ -219,7 +253,7 @@ export default class Sidebar {
     async saveAnnotation() {
     
           var id = document.getElementById('annoId').value;
-          var thumbnail =  document.getElementById('preview').getAttribute('src'); 
+          //var thumbnail =  document.getElementById('preview').getAttribute('src'); 
               
           var text = this.htmlConvert(document.getElementById('annoText').value);
           
@@ -230,7 +264,7 @@ export default class Sidebar {
           
           this.main.viewer.annotation.target.source = document.getElementById('canvasUri').value;
           this.main.viewer.annotation.body[0].value = text;
-          this.main.viewer.annotation.body[1].value = thumbnail;
+          //this.main.viewer.annotation.body[1].value = thumbnail;
           
           for(var i in tags) {
               if(tags[i] != "") {

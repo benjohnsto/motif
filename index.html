@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sliiicer: Simple Annotation Tool</title>
-    
-    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+    <title>A Simple Annotation Tool</title>
+
     <link rel="stylesheet" href="style.css">
     <style>
     #gallery {
@@ -22,10 +21,10 @@
     </style>
 </head>
 <body>
-<div id="myviewer" style="width:100%;height:800px;display:block;"></div>
+<div id="myviewer" style="width:700px;height:800px;display:block;"></div>
 
 <script src="dist/motif.js?v=2"></script>
-<script src="adapters/NanostoreAdapter.js"></script>
+<script src="adapters/LocalStorageAdapter.js"></script>
 <script>
 //https://data.artmuseum.princeton.edu/iiif/objects/32499
 
@@ -33,7 +32,7 @@
     'id':'myviewer',
     'mode': 'edit',
     'manifest': 'https://figgy.princeton.edu/concern/scanned_resources/b592d95a-6c86-47ee-bec4-643e1f0cb1eb/manifest'      
-  }, new NanostoreAdapter('', 'http://localhost/nanostore3'));
+  }, new LocalStorageAdapter('', 'http://localhost/nanostore3'));
 </script>
     
     

@@ -6,12 +6,15 @@
 
 .panel { 
   position: absolute;
-  right: -30%;
-  width: 30%;
+  right: -320px;
+  width: 320px;
   top:0;
   bottom:0;
   transition: right 1s;
   background: #f7f7f7;
+  display:flex;
+  flex-direction:column;
+  justify-content: space-between;
  }
 .viewer.split { width:70%;transition: width 1s; }
 .panel.split { right: 0%; transition: right 1s; }
@@ -58,19 +61,24 @@
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
+  height:90%;
+  margin-bottom:1em;
 }
-#annoForm.shown {display:flex;}
+#annoForm.shown {display:flex;flex-direction:column;}
 
 
 
-#annoForm textarea,
-#annoForm input { padding:1em;border: none; border-radius: 10px; }
+#annoForm textarea { padding:1em;border:none; border-radius: 10px;height:90%; }
+#annoForm input { padding:1em;border:none; border-radius: 10px; }
 
 #annoList {
   display: none;
   flex-direction: column;
   gap: 0.5em;
   padding:0.2em;
+  height:90%;
+  overflow-y: auto;
+  margin-bottom: 1em;
 }
 #annoList.shown { display: flex; }
 
