@@ -17,6 +17,7 @@ class Motif {
         this.config = config;
         this.divId = config.id;
         this.iconpath = "./icons";
+        this.ui = {};
         this.wrapper = document.getElementById(config.id);
         this.mode = config.mode === "edit" ? "edit" : "view";
         this.initUI();
@@ -130,18 +131,10 @@ class Motif {
         const tal = document.createElement("div");
         tal.id = `annoList`;     
         tp.appendChild(tal);
-        
-        
-        
-        // edit annotation tools
-       
-        if(this.mode == 'edit') {
-          const tat = document.createElement("div");
-          tat.id = `annoTools`;
-          tat.style['text-align'] = "right";
-          tat.style['padding'] = "8px";
-          tp.appendChild(tat);
-        }
+        const tools = document.createElement("div");
+        tools.id = `annoTools`;
+        tp.appendChild(tools);
+
 
     }
     
@@ -212,7 +205,12 @@ class Motif {
          var r = document.createElement(element);
          if(id !== null) { r.id = id; }
          for(var i in attr) {
-            if(i == "class") { r.classList.add(attr[i]); }
+            if(i == "class") { 
+              if(Array.isArray(attr[i])) { 
+                var cls = attr[i].map((c)=>{r.classList.add(c);});
+              }
+              else { r.classList.add(attr[i]); }
+            }
             else { r.setAttribute(i, attr[i]); }
          }
          if(innerHTML) { r.innerHTML = innerHTML; }

@@ -1,6 +1,6 @@
 
-.highlight {background:rgba(255, 0, 0, 0.3);cursor:pointer;}
-.lowlight {background:rgba(0, 0, 0, 0.2);border: solid 2px oldlace;}
+.overlay {background:rgba(0, 0, 0, 0.2);border: solid 2px oldlace;}
+.overlay.highlight {background:rgba(255, 0, 0, 0.3);cursor:pointer;}
 
 .viewer { width:100%;transition: width 1s; }
 
@@ -81,7 +81,11 @@
   margin-bottom: 1em;
 }
 #annoList.shown { display: flex; }
-
+#annoTools {
+padding: 8px;
+  display: flex;
+  justify-content: right;
+}
 
 .button { 
   background:black;

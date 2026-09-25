@@ -1,15 +1,5 @@
 import OpenSeadragon from 'openseadragon';
 
-/*
-import crop from './assets/images/crop.svg';
-import cropA from './assets/images/cropA.svg';
-import zoomin from './assets/images/plus.svg';
-import zoomout from './assets/images/minus.svg';
-import home from './assets/images/home.svg';
-import full from './assets/images/full.svg';
-import rotateleft from './assets/images/rotateLeft.svg';
-import rotateright from './assets/images/rotateRight.svg';
-*/
 
 export default class Viewer {
 
@@ -53,6 +43,7 @@ export default class Viewer {
 	      }
 	    }}
 	this.annotation = {};
+	this.overlay = {};
         this.init();
     }
 
@@ -184,7 +175,7 @@ export default class Viewer {
         this.main.cropActive = false;
         this.mode = 'view';
         this.osd.setMouseNavEnabled(true);
-        this.osd.removeOverlay("overlay");
+        this.osd.removeOverlay(this.overlay);
         this.overlayOn = false;
         this.main.sidebar.clearForm();
         this.main.sidebar.close(); 
@@ -211,6 +202,7 @@ export default class Viewer {
             this.deactivateCrop();
         } else {
             this.activateCrop();
+            this.main.sidebar.close();
         }
     }
     
@@ -240,7 +232,7 @@ export default class Viewer {
         overlayElement.addEventListener('mouseover', (e) => {  });
         overlayElement.addEventListener('mouseleave', (e) => {  });    
         
-        overlayElement.className = "lowlight";
+        overlayElement.className = "overlay";
         overlayElement.setAttribute('id',`${id}`);
         overlayElement.setAttribute('rel',`${id}`);
         
@@ -259,6 +251,8 @@ export default class Viewer {
            clickHandler: (event) => {
                 // Prevent OSD from interpreting this as a canvas click/zoom
                 event.preventDefaultAction = true;
+                //overlayElement.style.borderColor = "#ff0000";
+                overlayElement.classList.add('highlight');
                 const rel = event.originalTarget.getAttribute('rel');
 		this.main.sidebar.showAnnotation(rel);
 	   }
@@ -282,7 +276,7 @@ export default class Viewer {
     * 
     ***********************/
     async setAnnotations(canvas) {
-  console.log('set annotations');    
+  
 
       if(this.main.adapter.endpoint) {
         //this.osd.clearOverlays();
@@ -340,19 +334,19 @@ export default class Viewer {
     handlePress(event) {
         if (!this.mode == 'view') {  return;  }
 	if (this.overlayOn) {  this.osd.removeOverlay("overlay");  }
-        var overlayElement = document.createElement("div");
-        overlayElement.id = "overlay";
-        overlayElement.className = "highlight";
+        this.overlay = document.createElement("div");
+        this.overlay.id = "overlay";
+        this.overlay.className = "overlay";
 
         var viewportPos = this.osd.viewport.pointFromPixel(event.position);
         this.osd.addOverlay({
-            element: overlayElement,
+            element: this.overlay,
             location: new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0)
         });
         this.overlayOn = true;
             
         this.osd.drag = {
-            overlayElement: overlayElement,
+            overlayElement: this.overlay,
             startPos: viewportPos
         };
     }
@@ -411,6 +405,8 @@ export default class Viewer {
             this.annotation.institution = "Princeton";
             this.annotation.course = "ART 200, Fall 2026";
             this.annotation.project = "Test 1";
+
+            this.overlay.classList.add('highlight');
             
             this.main.sidebar.create();
             this.mode = 'view';

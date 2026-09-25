@@ -6,12 +6,43 @@ export default class Sidebar {
         this.main = main;
         this.mode = 'view';
         this.annotations = [];
+        this.current = "";
         this.ui = {};     
         this.init();
     }
 
     init() {
+    
+        var tools = document.getElementById("annoTools");
+        this.ui.save = this.main.domElement("a", "annosave", {"href":"#"}, tools);
+        this.ui.save.style.display = "none";
+        var si = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);
+        this.ui.edit = this.main.domElement("a", "annoedit", {"href":"#","class":"annoedit"}, tools);
+        this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, this.ui.edit);
+        this.ui.trash = this.main.domElement("a", "annoremove", {"href":"#","class":"annoremove"}, tools);
+        this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, this.ui.trash);
+        
+	this.ui.save.addEventListener("click", (e) => {
+	  this.saveAnnotation(e);
+	  this.toggleSaveEdit();
+	});
+        
+	this.ui.edit.addEventListener('click', (e) => {
+	  //var id = e.currentTarget.getAttribute('data-id');
+	  
+	  var items = this.main.viewer.annotationPage.items;	  
+	  for(var i in items) {
+	    if(items[i].id == this.current) {
+	      var anno = items[i];
+	      this.editAnnotation(anno);
+	    }
+	  }
+	});
 
+	this.ui.trash.addEventListener('click', (e) => {
+	  //var id = e.currentTarget.getAttribute('data-id');
+	  this.deleteAnnotation(this.current);
+	});
 
     }
     
@@ -22,18 +53,19 @@ export default class Sidebar {
          var image = `${this.main.viewer.currentItem.service}/${region}/,300/${rotation}/default.jpg`;
          document.getElementById('canvasUri').value = this.main.viewer.currentItem.canvas;
          document.getElementById('annoText').value = this.main.viewer.annotation.body[0].value;
-         document.getElementById('preview').setAttribute('src',image);
+         //document.getElementById('preview').setAttribute('src',image);
          document.getElementById(`annoForm`).style.display = "flex";
          document.getElementById(`annoList`).style.display = "none";
-         document.getElementById("annoSubmit").innerText = "Create";
-         this.open();       
+         //document.getElementById("annoSubmit").innerText = "Create";
+         this.open();
+         this.toggleSaveEdit();       
     }
     
     
     
     
     editAnnotation(anno) {
-
+	  console.log(anno);
          this.main.viewer.annotation = anno;
          var text = anno.body[0].value.replaceAll("<br />","\n");
          var tags = [];
@@ -77,6 +109,7 @@ export default class Sidebar {
          v.classList.remove('split');
          var p = document.getElementById(`${this.main.divId}_panel`);
          p.classList.remove('split');
+         document.querySelectorAll('.overlay').forEach(o => o.classList.remove('highlight'));
     }
     
     clearForm() {
@@ -90,6 +123,7 @@ export default class Sidebar {
     
     
     showAnnotation(id) {
+      this.current = id;
       document.getElementById(`annoList`).innerHTML = "";
       var items = this.main.viewer.annotationPage.items;
       for(var i in items) {
@@ -177,12 +211,13 @@ export default class Sidebar {
 	//if(anno.body.length > 1) { content.innerHTML = anno.body[0].value; }		
 	
 	if(this.main.mode == 'edit') {
-		const tools = document.getElementById("annoTools");
-		tools.innerHTML = "";
+		//const tools = document.getElementById("annoTools");
+		//tools.innerHTML = "";
 			
 		//newanno.appendChild(tools);
 		
 		// populate tools
+		/*
 		this.ui.save = this.main.domElement("a", "annosave", {"href":"#","class":"annosave","data-id":anno.id}, tools);
 		this.ui.save.style.display = "none";
                 const saveicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);			
@@ -216,6 +251,7 @@ export default class Sidebar {
 		  var id = e.currentTarget.getAttribute('data-id');
 		  this.deleteAnnotation(id);
 		});
+		*/
 
 	} // end if mode = edit
 
