@@ -65,6 +65,8 @@ export default class Nav {
               this.main.manifest = manifest;
               this.main.manifestData = this.main.manifests[manifest];
               this.main.load();
+              this.main.nav.mode = "view";
+              this.main.nav.toggleSaveEdit();
               this.close();
             });
 

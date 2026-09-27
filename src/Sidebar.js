@@ -115,6 +115,8 @@ export default class Sidebar {
          var p = document.getElementById(`${this.main.divId}_panel`);
          p.classList.remove('split');
          document.querySelectorAll('.overlay').forEach(o => o.classList.remove('highlight'));
+         this.mode == 'view';
+         toggleSaveEdit();
     }
     
     clearForm() {
