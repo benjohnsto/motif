@@ -16,9 +16,38 @@
   flex-direction:column;
   justify-content: space-between;
  }
+ 
+#navpanel {
+  position: absolute;
+  right:0;
+  top:0;
+  bottom:0;
+  left:0;
+  border:solid 1px black;
+  display:flex;
+  visibility:hidden;
+  transition:opacity 1s;
+  opacity:0;
+  background: #333;
+  flex-direction:column;
+  justify-content: space-between;
+}
+#navpanel.shown {visibility:visible; opacity:1;transition:opacity 1s;}
+
+#navpanelhead { text-align:right; }
+
+#navpanelcontent {
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  height:100%;
+}
+#addmanifest { display:flex;margin;1em; } 
+#addmanifest input { padding:0.6em; }
+#addmanifest input[type='text'] { width:80%; }
 .viewer.split { width:70%;transition: width 1s; }
 .panel.split { right: 0%; transition: right 1s; }
-
+#navpanel.split { right: 0%; transition: right 1s; }
 
 .panel.shown { display:block; }
 
@@ -28,9 +57,25 @@
 .image { max-height:95%;max-width:95%;box-shadow: 0 0 5px #444;border-radius:3px;  }
 
 
-.tile { 
+.tile.sm { 
   width: 100px;
   height: 100px;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  margin-right:1px;
+ }
+ .tile.sm img { 
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow:0 0 5px #444;
+ }
+ .tile.active img { 
+  border: solid 2px red;
+ } 
+.tile.active {}
+
+.tile { 
   text-align: center;
   flex-direction: column;
   justify-content: center;
@@ -41,10 +86,7 @@
   max-height: 90%;
   box-shadow:0 0 5px #444;
  }
- .tile.active img { 
-  border: solid 2px red;
- } 
-.tile.active {}
+
 
 .counter {
   position: absolute;
@@ -82,10 +124,11 @@
 }
 #annoList.shown { display: flex; }
 #annoTools {
-padding: 8px;
+  padding: 8px;
   display: flex;
-  justify-content: right;
+  justify-content: space-between;
 }
+.annotools img { margin:4px; }
 
 .button { 
   background:black;
@@ -94,11 +137,8 @@ padding: 8px;
   color:white;
 }
 
-.annotools {
-    margin: 10px 0 0;
-    text-align:right;
-}
-.annotools img { margin:4px; }
+
+
 
 
 .annotation {
@@ -116,7 +156,13 @@ padding: 8px;
 #annoSubmit {
   cursor:pointer;
 }
-
+#gallerycontainer {overflow-y: auto;height: 82%;}
+#gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 10rem);
+  grid-template-rows: 10rem;
+  grid-gap: 0.5em;
+}
 
 
 .tags { margin: 1em 0;}

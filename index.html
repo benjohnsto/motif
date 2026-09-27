@@ -6,19 +6,7 @@
     <title>A Simple Annotation Tool</title>
 
     <link rel="stylesheet" href="style.css">
-    <style>
-    #gallery {
-      margin-top:2em;
-      display:grid;
-      grid-template-columns: repeat(5, 10rem); 
-      grid-template-rows: 10rem; 
-      grid-gap:0.5em;
-    } 
-    .block{
-     background:#EEE;
-     padding:1em;
-    }
-    </style>
+
 </head>
 <body>
 <div id="myviewer" style="width:700px;height:800px;display:block;"></div>
@@ -27,12 +15,18 @@
 <script src="adapters/LocalStorageAdapter.js"></script>
 <script>
 //https://data.artmuseum.princeton.edu/iiif/objects/32499
+//https://figgy.princeton.edu/concern/scanned_resources/b592d95a-6c86-47ee-bec4-643e1f0cb1eb/manifest
+//https://localhost/mixtape/136/manifest
 
   var c = new Motif({
     'id':'myviewer',
     'mode': 'edit',
-    'manifest': 'https://figgy.princeton.edu/concern/scanned_resources/b592d95a-6c86-47ee-bec4-643e1f0cb1eb/manifest'      
-  }, new LocalStorageAdapter('', 'http://localhost/nanostore3'));
+    'manifest': 'https://tripleyefish.com/mixtape/226/manifest',
+    'showNav': true,
+    'annotation': {
+      "adapter": new LocalStorageAdapter('', 'http://localhost/nanostore3')
+    }    
+  });
 </script>
     
     

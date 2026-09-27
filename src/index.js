@@ -4,6 +4,7 @@ import * as manifesto from "manifesto.js";
 import Viewer from './Viewer';
 import Strip from './Strip';
 import Sidebar from './Sidebar';
+import Nav from './Nav';
 //import Adapter from './Adapter';
 
 // Don't forget to import the required CSS for the annotation layer UI
@@ -13,10 +14,11 @@ import '@annotorious/openseadragon/annotorious-openseadragon.css';
 
 class Motif {
 
-    constructor(config, adapter) {
+    constructor(config) {
         this.config = config;
         this.divId = config.id;
         this.iconpath = "./icons";
+
         this.ui = {};
         this.wrapper = document.getElementById(config.id);
         this.mode = config.mode === "edit" ? "edit" : "view";
@@ -26,38 +28,25 @@ class Motif {
         if (!this.config.manifest) { return false; }
 
         this.manifest = config.manifest;
+        this.manifests = {};
         this.manifestData = {};
         this.items = {};
         this.annotationPage = {};
+        
+        if(config.showNav) { this.showNav = true; }
+        if(config.annotation.adapter) { this.adapter = config.annotation.adapter; }
         
         this.viewer = new Viewer(this);
         this.strip = new Strip(this);
         this.sidebar = new Sidebar(this);
         
-        if(adapter) { this.adapter = adapter; }
+        this.nav = new Nav(this);
 
-/*
-        if(config.annotation.endpoint) {
-          this.loadAdapter();
-          //this.adapter = new Adapter( this, config.annotation.endpoint );
-        }
-        if(config.annotation.creator) {
-          this.viewer.annotationTemplate.creator = config.annotation.creator;
-        }
-        if(config.annotation.institution) {
-          this.viewer.annotationTemplate.institution = config.annotation.institution;
-        }
-        if(config.annotation.course) {
-          this.viewer.annotationTemplate.course = config.annotation.course;
-        }
-*/
-          this.load(config.manifest)
+          this.parse(config.manifest)
             .then(() => {
-                this.strip.draw(); 
-                this.viewer.open(this.manifestData.items[0]);
-                
-                //setItem(this.manifestData.items[0]);
-                //this.viewer.currentItem = this.manifestData.items[0];
+                this.manifest = Object.values(this.manifests)[0].id;
+                this.manifestData = Object.values(this.manifests)[0];
+                this.load();
             })
             .catch(err => {
                 console.log("Something failed along the way", err);
@@ -67,34 +56,35 @@ class Motif {
     }
 
     initUI() {
-
-        const t = document.createElement("div");
-        t.id = `${this.divId}_top`;
-        t.setAttribute('class','myframe');
-        t.style.height = (document.getElementById(this.divId).offsetHeight - 120) + "px";
-        t.style.display = "flex";
-        t.style.overflow = "hidden";
-        t.style.position = "relative";
-        this.wrapper.appendChild(t);
+        this.wrapper.style.position = "relative";
+        //this.wrapper.style.overflow = "hidden";
+        this.ui.top = document.createElement("div");
+        this.ui.top.id = `${this.divId}_top`;
+        this.ui.top.setAttribute('class','myframe');
+        this.ui.top.style.height = (document.getElementById(this.divId).offsetHeight - 120) + "px";
+        this.ui.top.style.display = "flex";
+        this.ui.top.style.overflow = "hidden";
+        this.ui.top.style.position = "relative";
+        this.wrapper.appendChild(this.ui.top);
                
         
-        const b = document.createElement("div");
-        b.id = `${this.divId}_bottom`;
-        b.style.height = "120px";
-        b.style["overflow-y"] = "auto";
-        b.style["margin"] = "10px 0";
-        this.wrapper.appendChild(b); 
+        this.ui.bottom = document.createElement("div");
+        this.ui.bottom.id = `${this.divId}_bottom`;
+        this.ui.bottom.style.height = "120px";
+        this.ui.bottom.style["overflow-y"] = "auto";
+        this.ui.bottom.style["margin"] = "10px 0";
+        this.wrapper.appendChild(this.ui.bottom); 
 
         const tv = document.createElement("div");
         tv.id = `${this.divId}_viewer`;
         tv.classList.add('viewer');       
-        t.appendChild(tv);
+        this.ui.top.appendChild(tv);
 
         const tp = document.createElement("div");
         tp.id = `${this.divId}_panel`;
         tp.classList.add('panel');
         tp.style['overflow-x'] = "auto";
-        t.appendChild(tp);  
+        this.ui.top.appendChild(tp);  
         
 	// panel toolbar
         const tt = document.createElement("div");
@@ -140,64 +130,105 @@ class Motif {
     
 
 
-    async load(url) {
+async parse(url) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/ld+json, application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.warn(`Skipping \({url}: HTTP\){response.status}`);
+      return null;
+    }
+
+    const contentType = response.headers.get('content-type') || '';
     
-    
-    // Return the promise chain so the caller can await it
-    return fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(async data => { // Added async here to handle inner awaits
-            const manifestobj = manifesto.parseManifest(data);
-            
-            if (manifestobj.isCollection()) {
-                this.type = 'collection';
-                this.mode = 'collection';
-                this.collection = {
-                    'id': manifestobj.id,
-                    'label': manifestobj.getLabel().getValue()
-                };
+    // Cloudflare returns text/html instead of JSON
+    if (contentType.includes('text/html')) {
+      const text = await response.text();
+      if (text.includes('Enable JavaScript and cookies') || text.includes('cf-browser-verification')) {
+        console.warn(`Skipping ${url}: Intercepted by Cloudflare bot protection.`);
+        return null;
+      }
+      
+      console.warn(`Skipping ${url}: Expected JSON but received HTML.`);
+      return null;
+    }
 
-                // Map each item to a recursive load promise
-                const promises = manifestobj.items.map(item => this.load(item.id));
-                
-                // CRITICAL: Wait for all nested fetches to finish completely
-                await Promise.all(promises);
-                
-            } else {
-                var canvases = manifestobj.getSequences()[0].getCanvases();
+    const data = await response.json();
+    const manifestobj = manifesto.parseManifest(data);
 
-                var obj = {
-                    'id': manifestobj.id,
-                    'label': manifestobj.getDefaultLabel(),
-                    'thumb': canvases[0].getCanonicalImageUri(200),
-                    'meta': manifestobj.getMetadata(),
-                    'items': []
-                };
+    if (manifestobj.isCollection()) {
+      this.type = 'collection';
+      this.showNav = true;
+      console.log(this);
+      this.collection = {
+        'id': manifestobj.id,
+        'label': manifestobj.getLabel() ? manifestobj.getLabel().getValue() : 'Untitled Collection'
+      };
 
-                for (var i in canvases) {
-                    var o = {
-                        'service': canvases[i].imageResources[0].getServices()[0].id,
-                        'thumb': canvases[i].getCanonicalImageUri(100),
-                        'canvas': canvases[i].id,
-                        'rotation': 0
-                    };
-                    obj.items.push(o);
-                    this.items[canvases[i].id] = o;
-                }
-                
-                obj.thumb = obj.items[0].thumb;
-                this.manifestData = obj;
-            }
-        })
-        .catch(error => {
-            console.error(`Failed to load or parse manifest from ${url}:`, error);
-            throw error; // Re-throw so the caller knows it failed
-        });
+      // Map each item to a recursive load promise
+      const promises = manifestobj.items.map(item => this.parse(item.id));
+      
+      // Filter out skipped/failed null results
+      const results = await Promise.all(promises);
+      return results.filter(Boolean);
+
+    } else {
+      const sequences = manifestobj.getSequences();
+      if (!sequences || !sequences.length) {
+        console.warn(`Skipping ${url}: No sequences found in manifest.`);
+        return null;
+      }
+
+      const canvases = sequences[0].getCanvases();
+      const obj = {
+        'id': manifestobj.id,
+        'label': manifestobj.getDefaultLabel(),
+        'thumb': canvases[0] ? canvases[0].getCanonicalImageUri(200) : '',
+        'meta': manifestobj.getMetadata(),
+        'items': []
+      };
+
+      for (const canvas of canvases) {
+        const imageResource = canvas.imageResources?.[0];
+        const service = imageResource?.getServices()?.[0];
+
+        const o = {
+          'service': service ? service.id : '',
+          'thumb': canvas.getCanonicalImageUri(100),
+          'canvas': canvas.id,
+          'rotation': 0
+        };
+        obj.items.push(o);
+        this.items[canvas.id] = o;
+      }
+
+      if (obj.items.length > 0) {
+        obj.thumb = obj.items[0].thumb;
+      }
+
+      this.manifestData = obj;
+      this.manifests[url] = obj;
+      return obj;
+    }
+
+  } catch (error) {
+    console.error(`Failed to parse manifest from ${url}:`, error);
+    // Returning null allows Promise.all in parent collections to complete for other valid items
+    return null; 
+  }
+}
+      
+      
+      load() {
+        console.log(this.manifest);
+        console.log(this.manifestData);
+        this.strip.draw();
+        this.nav.draw();
+        this.viewer.open(this.manifestData.items[0]);
       }
       
       

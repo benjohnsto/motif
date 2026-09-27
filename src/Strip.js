@@ -2,22 +2,23 @@ export default class Strip {
 
     constructor(main) {
         this.main = main;
+        this.ui = {}
         this.init();
     }
 
     init() {
         this.wrap = document.getElementById(`${this.main.divId}_bottom`);
-        this.element = document.createElement("div");
-        this.element.id = `${this.main.divId}_bottom_content`;
-        this.element.style.display = "flex";
-        this.element.style.width = "fit-content";
-
-        this.wrap.appendChild(this.element);
+        this.ui.strip = document.createElement("div");
+        this.ui.strip.id = `${this.main.divId}_bottom_content`;
+        this.ui.strip.style.display = "flex";
+        this.ui.strip.style.width = "fit-content";
+        this.wrap.appendChild(this.ui.strip);
         
     }
     
     draw() {
       console.log('drawing strip');
+      this.ui.strip.innerHTML = "";
       for(var i in this.main.manifestData.items) {
         this.addTile(i, this.main.manifestData.items[i]);
       }
@@ -50,16 +51,20 @@ export default class Strip {
 
 
     addTile(index, o) {
-
-      const tile = document.createElement('a');
+      var c = document.getElementById(`${this.main.divId}_bottom_content`);
+      var t = this.main.domElement("a", o.canvas, {"class":["tile","sm"], "rel": index, "href":"#"}, c);
+      var i = this.main.domElement("img", null, {"src":o.thumb}, t);
+      
+      //const tile = document.createElement('a');
      
-      tile.setAttribute('rel', index);
-      tile.id = o.canvas;
-      tile.setAttribute('href', '#');
-      tile.setAttribute('class', 'tile');
-      tile.innerHTML = `<img src='${o.thumb}'/>`;
+      //tile.setAttribute('rel', index);
+      //tile.id = o.canvas;
+      //tile.setAttribute('href', '#');
+      //tile.setAttribute('class', 'tile');
+      //tile.addAttribute('class', 'sm');
+      //tile.innerHTML = `<img src='${o.thumb}'/>`;
            
-      tile.onclick = (event) => { 
+      t.onclick = (event) => { 
         event.preventDefault();
         this.highlight(event.currentTarget.id);
         this.scrollTo(event.currentTarget);
@@ -71,7 +76,7 @@ export default class Strip {
         this.main.viewer.open(this.main.manifestData.items[rel]);
 
       };	
-      document.getElementById(`${this.main.divId}_bottom_content`).appendChild(tile); 
+ 
     }  
 
 }

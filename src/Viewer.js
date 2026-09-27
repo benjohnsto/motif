@@ -139,11 +139,25 @@ export default class Viewer {
             });
             cropButton.element.id = 'cropbutton';
             this.osd.addControl(cropButton.element, {
-                anchor: OpenSeadragon.ControlAnchor.TOP_LEFT
+                anchor: OpenSeadragon.ControlAnchor.TOP_RIGHT
             });
         }
         
+
         
+        // if the addnew config item is present
+        if(typeof this.main.showNav !== 'undefined') {
+            let navButton = new OpenSeadragon.Button({
+                tooltip: '',
+                srcRest: `${this.main.iconpath}/hamburger.svg`,
+                srcHover: `${this.main.iconpath}/hamburger.svg`,
+                onClick: () => this.main.nav.open()
+            });
+            navButton.element.id = 'explore';
+            this.osd.addControl(navButton.element, {
+                anchor: OpenSeadragon.ControlAnchor.TOP_LEFT
+            });
+        }       
 
 
     }
@@ -287,7 +301,6 @@ export default class Viewer {
 
               this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
               this.annotationPage = await this.main.adapter.get();
-              console.log(this.annotationPage);
 
               if(this.annotationPage) {
                    const myTimeout = setTimeout(() => { 

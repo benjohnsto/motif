@@ -1,0 +1,34 @@
+	if(this.main.mode == 'edit') {
+		const tools = document.createElement("div");
+		tools.classList.add('annotools');		
+		newanno.appendChild(tools);
+		
+		// populate tools
+					
+		const editlink = this.main.domElement("a", null, {"href":"#","class":"annoedit","data-id":anno.id}, tools);
+                const editicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, editlink);
+		const deletelink = this.main.domElement("a", null, {"href":"#","data-id":anno.id}, tools);
+                const deleteicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, deletelink);
+		
+		editlink.addEventListener('click', (e) => {
+		  var id = e.currentTarget.getAttribute('data-id');
+		  
+		  var items = this.main.viewer.annotationPage.items;
+		  
+		  for(var i in items) {
+		    if(items[i].id == id) {
+		      var anno = items[i];
+		      this.editAnnotation(anno);
+		    }
+		  }
+		});
+
+		deletelink.addEventListener('click', (e) => {
+		  var id = e.currentTarget.getAttribute('data-id');
+		  this.deleteAnnotation(id);
+		});
+
+	} // end if mode = edit
+
+	// append to main list		
+	document.getElementById(`annoList`).appendChild(newanno); 

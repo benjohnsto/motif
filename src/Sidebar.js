@@ -14,13 +14,18 @@ export default class Sidebar {
     init() {
     
         var tools = document.getElementById("annoTools");
-        this.ui.save = this.main.domElement("a", "annosave", {"href":"#"}, tools);
-        this.ui.save.style.display = "none";
-        var si = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);
-        this.ui.edit = this.main.domElement("a", "annoedit", {"href":"#","class":"annoedit"}, tools);
-        this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, this.ui.edit);
+
         this.ui.trash = this.main.domElement("a", "annoremove", {"href":"#","class":"annoremove"}, tools);
         this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, this.ui.trash);
+        
+        var span = this.main.domElement("span", null, {}, tools);
+
+        this.ui.save = this.main.domElement("a", "annosave", {"href":"#"}, span);
+        this.ui.save.style.display = "none";
+        var si = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);
+        this.ui.edit = this.main.domElement("a", "annoedit", {"href":"#","class":"annoedit"}, span);
+        this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, this.ui.edit);
+        
         
 	this.ui.save.addEventListener("click", (e) => {
 	  this.saveAnnotation(e);
