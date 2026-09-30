@@ -5,11 +5,11 @@ import Viewer from './Viewer';
 import Strip from './Strip';
 import Sidebar from './Sidebar';
 import Nav from './Nav';
-//import Adapter from './Adapter';
 
 import close from './assets/icons/close.svg';
 
 import '@annotorious/openseadragon/annotorious-openseadragon.css';
+import mycss from './assets/css/style.css';
 
 class Motif {
 
