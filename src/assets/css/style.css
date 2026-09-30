@@ -43,7 +43,7 @@
   flex-direction: column;
   height:100%;
 }
-#addmanifest { display:flex;margin;1em;width:100% } 
+#addmanifest { display:flex;margin:1em;width:100% } 
 #addmanifest input { padding: 0.6em 2em; }
 #addmanifest input[type='text'] { width:100%; }
 .viewer.split { width:70%;transition: width 1s; }

@@ -44,7 +44,7 @@ class Motif {
             .then(() => {
                 this.manifest = Object.values(this.manifests)[0].id;
                 this.manifestData = Object.values(this.manifests)[0];
-                this.load();
+                this.setStage();
             })
             .catch(err => {
                 console.log("Something failed along the way", err);
@@ -188,6 +188,7 @@ async parse(url) {
       return results.filter(Boolean);
 
     } else {
+
       const sequences = manifestobj.getSequences();
       if (!sequences || !sequences.length) {
         console.warn(`Skipping ${url}: No sequences found in manifest.`);
@@ -220,7 +221,9 @@ async parse(url) {
       if (obj.items.length > 0) {
         obj.thumb = obj.items[0].thumb;
       }
-
+      
+      console.log(obj);
+      
       this.manifestData = obj;
       this.manifests[url] = obj;
       return obj;
@@ -234,7 +237,16 @@ async parse(url) {
 }
       
       
-      load() {
+      load(url) {
+        console.log(url);
+        this.manifest = url;
+        this.parse(url).then((d)=>{
+          this.setStage();
+        });
+        
+      }
+      
+      setStage() {
         console.log(this.manifest);
         console.log(this.manifestData);
         this.strip.draw();

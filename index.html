@@ -11,6 +11,8 @@
 <body>
 <div id="myviewer" style="width:700px;height:800px;display:block;"></div>
 
+<p><a href="#" onclick="doit()">Click</a></p>
+
 <script src="dist/motif.js?v=2"></script>
 <script src="adapters/LocalStorageAdapter.js"></script>
 <script>
@@ -27,6 +29,10 @@
       "adapter": new LocalStorageAdapter('', 'http://localhost/nanostore3')
     }    
   });
+  
+  function doit() {
+    c.load("https://figgy.princeton.edu/concern/scanned_resources/5d41d7fd-93d4-4140-b079-9abf98ef9aa7/manifest");
+  }
 </script>
     
     
