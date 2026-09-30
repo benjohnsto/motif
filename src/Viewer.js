@@ -1,5 +1,14 @@
 import OpenSeadragon from 'openseadragon';
 
+import zoomin from './assets/icons/zoomin.svg';
+import zoomout from './assets/icons/zoomout.svg';
+import home from './assets/icons/home.svg';
+import full from './assets/icons/full.svg';
+import rotateleft from './assets/icons/rotateleft.svg';
+import rotateright from './assets/icons/rotateright.svg';
+import crop from './assets/icons/crop.svg';
+import cropActive from './assets/icons/cropActive.svg';
+import hamburger from './assets/icons/hamburger.svg';
 
 export default class Viewer {
 
@@ -58,28 +67,28 @@ export default class Viewer {
             tileSources: [],
             navImages: {
                 zoomIn: {
-                  REST: `${this.main.iconpath}/zoomin.svg`,
-                  GROUP: `${this.main.iconpath}/zoomin.svg`,
-                  HOVER: `${this.main.iconpath}/zoomin.svg`,
-                  DOWN: `${this.main.iconpath}/zoomin.svg`
+                  REST: zoomin,
+                  GROUP: zoomin,
+                  HOVER: zoomin,
+                  DOWN: zoomin
                 },
                 zoomOut: {
-                  REST: `${this.main.iconpath}/zoomout.svg`,
-                  GROUP: `${this.main.iconpath}/zoomout.svg`,
-                  HOVER: `${this.main.iconpath}/zoomout.svg`,
-                  DOWN: `${this.main.iconpath}/zoomout.svg` 
+                  REST: zoomout,
+                  GROUP: zoomout,
+                  HOVER: zoomout,
+                  DOWN: zoomout 
                 },
                 home: {
-                  REST: `${this.main.iconpath}/home.svg`,
-                  GROUP: `${this.main.iconpath}/home.svg`,
-                  HOVER: `${this.main.iconpath}/home.svg`,
-                  DOWN: `${this.main.iconpath}/home.svg`
+                  REST: home,
+                  GROUP: home,
+                  HOVER: home,
+                  DOWN: home
                 },
                 fullpage: {
-                  REST: `${this.main.iconpath}/full.svg`,
-                  GROUP: `${this.main.iconpath}/full.svg`,
-                  HOVER: `${this.main.iconpath}/full.svg`,
-                  DOWN: `${this.main.iconpath}/full.svg`
+                  REST: full,
+                  GROUP: full,
+                  HOVER: full,
+                  DOWN: full
                 }
             }
         });
@@ -109,8 +118,8 @@ export default class Viewer {
 
         this.rotateLeftButton = new OpenSeadragon.Button({
             tooltip: '',
-            srcRest: `${this.main.iconpath}/rotateleft.svg`,
-            srcHover: `${this.main.iconpath}/rotateleft.svg`,
+            srcRest: rotateleft,
+            srcHover: rotateleft,
             onClick: () => this.rotateLeft()
         });
         
@@ -120,8 +129,8 @@ export default class Viewer {
 
         this.rotateRightButton = new OpenSeadragon.Button({
             tooltip: '',
-            srcRest: `${this.main.iconpath}/rotateright.svg`,
-            srcHover: `${this.main.iconpath}/rotateright.svg`,
+            srcRest: rotateright,
+            srcHover: rotateright,
             onClick: () => this.rotateRight()
         });
         this.osd.addControl(this.rotateRightButton.element, {
@@ -133,8 +142,8 @@ export default class Viewer {
             
             let cropButton = new OpenSeadragon.Button({
                 tooltip: '',
-                srcRest: `${this.main.iconpath}/crop.svg`,
-                srcHover: `${this.main.iconpath}/crop.svg`,
+                srcRest: crop,
+                srcHover: crop,
                 onClick: () => this.toggleCrop()
             });
             cropButton.element.id = 'cropbutton';
@@ -149,8 +158,8 @@ export default class Viewer {
         if(typeof this.main.showNav !== 'undefined') {
             let navButton = new OpenSeadragon.Button({
                 tooltip: '',
-                srcRest: `${this.main.iconpath}/hamburger.svg`,
-                srcHover: `${this.main.iconpath}/hamburger.svg`,
+                srcRest: hamburger,
+                srcHover: hamburger,
                 onClick: () => this.main.nav.open()
             });
             navButton.element.id = 'explore';
@@ -184,7 +193,7 @@ export default class Viewer {
        if(this.main.mode == 'edit') {
         var cropbuttons = document.getElementById('cropbutton').getElementsByTagName('img');
         for (let i = 0; i < cropbuttons.length; i++) {
-            cropbuttons[i].src = `${this.main.iconpath}/crop.svg`;
+            cropbuttons[i].src = crop;
         }
         this.main.cropActive = false;
         this.mode = 'view';
@@ -200,7 +209,7 @@ export default class Viewer {
       if(this.main.mode == 'edit') {
         var cropbuttons = document.getElementById('cropbutton').getElementsByTagName('img');
         for (let i = 0; i < cropbuttons.length; i++) {
-            cropbuttons[i].src = `${this.main.iconpath}/cropActive.svg`;
+            cropbuttons[i].src = cropActive;
         }
         this.main.cropActive = true;
         this.mode = 'crop';
@@ -265,8 +274,9 @@ export default class Viewer {
            clickHandler: (event) => {
                 // Prevent OSD from interpreting this as a canvas click/zoom
                 event.preventDefaultAction = true;
-                //overlayElement.style.borderColor = "#ff0000";
-                overlayElement.classList.add('highlight');
+                var o = document.getElementsByClassName('highlight');
+		for (var i = 0; i < o.length; ++i) { o[i].classList.remove('highlight'); }
+		overlayElement.classList.add('highlight');
                 const rel = event.originalTarget.getAttribute('rel');
 		this.main.sidebar.showAnnotation(rel);
 	   }
@@ -305,7 +315,7 @@ export default class Viewer {
               if(this.annotationPage) {
                    const myTimeout = setTimeout(() => { 
                      this.drawOverlays();
-                    }, 500);
+                    }, 200);
               }
 
              }

@@ -1,4 +1,7 @@
 
+import trash from './assets/icons/trash.svg';
+import save from './assets/icons/save.svg';
+import edit from './assets/icons/edit.svg';
 
 export default class Sidebar {
 
@@ -16,20 +19,20 @@ export default class Sidebar {
         var tools = document.getElementById("annoTools");
 
         this.ui.trash = this.main.domElement("a", "annoremove", {"href":"#","class":"annoremove"}, tools);
-        this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, this.ui.trash);
+        this.main.domElement("img", null, {"src": trash}, this.ui.trash);
         
         var span = this.main.domElement("span", null, {}, tools);
 
         this.ui.save = this.main.domElement("a", "annosave", {"href":"#"}, span);
         this.ui.save.style.display = "none";
-        var si = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);
+        var si = this.main.domElement("img", null, {"src": save}, this.ui.save);
         this.ui.edit = this.main.domElement("a", "annoedit", {"href":"#","class":"annoedit"}, span);
-        this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, this.ui.edit);
+        this.main.domElement("img", null, {"src": edit}, this.ui.edit);
         
         
 	this.ui.save.addEventListener("click", (e) => {
 	  this.saveAnnotation(e);
-	  this.toggleSaveEdit();
+	  this.setMode('view');
 	});
         
 	this.ui.edit.addEventListener('click', (e) => {
@@ -53,6 +56,7 @@ export default class Sidebar {
     
 
     create() {
+         this.setMode('edit');
          var region = this.main.viewer.annotation.target.selector.value.replace('xywh=','').split(',');
          var rotation = this.main.viewer.currentItem.rotation;
          var image = `${this.main.viewer.currentItem.service}/${region}/,300/${rotation}/default.jpg`;
@@ -63,14 +67,14 @@ export default class Sidebar {
          document.getElementById(`annoList`).style.display = "none";
          //document.getElementById("annoSubmit").innerText = "Create";
          this.open();
-         this.toggleSaveEdit();       
+                
     }
     
     
     
     
     editAnnotation(anno) {
-	  console.log(anno);
+	 this.setMode('edit');
          this.main.viewer.annotation = anno;
          var text = anno.body[0].value.replaceAll("<br />","\n");
          var tags = [];
@@ -105,7 +109,8 @@ export default class Sidebar {
          var v = document.getElementById(`${this.main.divId}_viewer`);
          v.classList.add('split');
          var p = document.getElementById(`${this.main.divId}_panel`);
-         p.classList.add('split');  
+         p.classList.add('split');
+         //document.getElementById("annoText").focus();  
     }
     
     
@@ -115,8 +120,7 @@ export default class Sidebar {
          var p = document.getElementById(`${this.main.divId}_panel`);
          p.classList.remove('split');
          document.querySelectorAll('.overlay').forEach(o => o.classList.remove('highlight'));
-         this.mode == 'view';
-         toggleSaveEdit();
+         this.setMode('view');
     }
     
     clearForm() {
@@ -143,32 +147,20 @@ export default class Sidebar {
 
       }
     }
-
-    toggleSaveEdit() {
-      if(this.mode == 'view') {
+    
+    setMode(mode) {
+      this.mode = mode;
+      if(this.mode === 'edit') {
       this.ui.save.style['display'] = "inline-block";
       this.ui.edit.style['display'] = "none";
-      this.mode = 'edit';
       }
       else {
       this.ui.save.style['display'] = "none";
       this.ui.edit.style['display'] = "inline-block";
-      this.mode = 'view';
       }
-    /*
-      var s = document.getElementByID("annosave");
-      var e = document.getElementByID("annoedit");
-      console.log(s,e);
-      if(this.mode == 'edit') {
-        //document.getElementByID("annosave").style.display = "none";
-        //document.getElementByID("annoedit").style.display = "block";
-      }
-      else {
-        //document.getElementByID("annosave").style.display = "block";
-        //document.getElementByID("annoedit").style.display = "none";
-      }
-      */
     }
+
+
 
 
     drawAnnotation(anno) {
@@ -183,19 +175,7 @@ export default class Sidebar {
 
 	
 	var service = this.main.items[anno.target.source].service;
-	//var region = anno.target.selector.value.replace('xywh=pixel:','').replace('xywh=','').split(',').map((x)=>{return parseInt(x)}).join(',');
-
-	////const imgcontainer = document.createElement("div");
-	//imgcontainer.classList.add('imageFrame');		
-	//newanno.appendChild(imgcontainer);
-	//const image = document.createElement("img");
-	//image.classList.add('image');
 	
-	//if(anno.body[1]) { var rotation = anno.body[1].value.split('/')[11]; } else { var rotation = 0; }
-	
-	//image.setAttribute("src",anno.body[1].value);	
-	//imgcontainer.appendChild(image);
-		
 	const content = document.createElement("div");
 	content.classList.add('annocontent');		
 	newanno.appendChild(content);
@@ -210,57 +190,6 @@ export default class Sidebar {
 	if(tags.length > 0) {
 	   content.appendChild(this.tagConvert(tags));
 	}
-	
-	// populate content
-	//if(anno.body.length > 0) { content.innerHTML = anno.body[0].value; }
-	
-	// populate content
-	//if(anno.body.length > 1) { content.innerHTML = anno.body[0].value; }		
-	
-	if(this.main.mode == 'edit') {
-		//const tools = document.getElementById("annoTools");
-		//tools.innerHTML = "";
-			
-		//newanno.appendChild(tools);
-		
-		// populate tools
-		/*
-		this.ui.save = this.main.domElement("a", "annosave", {"href":"#","class":"annosave","data-id":anno.id}, tools);
-		this.ui.save.style.display = "none";
-                const saveicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/save.svg`}, this.ui.save);			
-		this.ui.edit = this.main.domElement("a", "annoedit", {"href":"#","class":"annoedit","data-id":anno.id}, tools);
-                const editicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/edit.svg`}, this.ui.edit);
-		const deletelink = this.main.domElement("a", null, {"href":"#","data-id":anno.id}, tools);
-                const deleteicon = this.main.domElement("img", null, {"src": `${this.main.iconpath}/remove.svg`}, deletelink);
-		
-		
-		this.ui.save.addEventListener("click", (e) => {
-		  this.saveAnnotation(e);
-		  this.toggleSaveEdit();
-		});
-		  
-		
-		this.ui.edit.addEventListener('click', (e) => {
-		  var id = e.currentTarget.getAttribute('data-id');
-		  
-		  var items = this.main.viewer.annotationPage.items;
-		  
-		  for(var i in items) {
-		    if(items[i].id == id) {
-		      var anno = items[i];
-		      this.editAnnotation(anno);
-		      this.toggleSaveEdit();
-		    }
-		  }
-		});
-
-		deletelink.addEventListener('click', (e) => {
-		  var id = e.currentTarget.getAttribute('data-id');
-		  this.deleteAnnotation(id);
-		});
-		*/
-
-	} // end if mode = edit
 
 	// append to main list		
 	document.getElementById(`annoList`).appendChild(newanno); 

@@ -7,17 +7,15 @@ import Sidebar from './Sidebar';
 import Nav from './Nav';
 //import Adapter from './Adapter';
 
-// Don't forget to import the required CSS for the annotation layer UI
-import '@annotorious/openseadragon/annotorious-openseadragon.css';
-//import mycss from './assets/css/style.css';
+import close from './assets/icons/close.svg';
 
+import '@annotorious/openseadragon/annotorious-openseadragon.css';
 
 class Motif {
 
     constructor(config) {
         this.config = config;
         this.divId = config.id;
-        this.iconpath = "./icons";
 
         this.ui = {};
         this.wrapper = document.getElementById(config.id);
@@ -91,8 +89,19 @@ class Motif {
         tt.id = `${this.divId}_panel_toolbar`;
         tt.style['text-align'] = "right";
         tt.style.padding = "8px";
-        const close_tp = document.createElement("img");
-        close_tp.src = `${this.iconpath}/close.svg`;
+
+	const close_tp = document.createElement("a");
+	close_tp.setAttribute("href", "#");
+	close_tp.setAttribute("aria-label", "Close"); // Essential for accessibility!
+
+	const close_tp_img = document.createElement("img");
+	close_tp_img.src = typeof close === 'object' && close.default ? close.default : close;
+	close_tp_img.alt = "Close icon";
+
+	close_tp.appendChild(close_tp_img);
+
+
+
         close_tp.onclick = (event) => {
            this.sidebar.close();
            this.viewer.deactivateCrop();
@@ -102,7 +111,9 @@ class Motif {
            this.sidebar.clearForm();
            this.sidebar.close();
         }
+
         tt.appendChild(close_tp);
+
         tp.appendChild(tt);
         
         

@@ -1,4 +1,5 @@
 
+import close from './assets/icons/close.svg';
 
 export default class Nav {
 
@@ -14,18 +15,21 @@ export default class Nav {
     init() {
       this.ui.panel = this.main.domElement("div", "navpanel", {"class":"whatever"}, this.main.wrapper);
       var head = this.main.domElement("div", "navpanelhead", {"class":"navpanel-head"}, this.ui.panel);
-      var a = this.main.domElement("a", null, {"href":"#"}, head);
-      var i = this.main.domElement("img", null, {"src": `${this.main.iconpath}/close.svg`,"onclick":"close"}, a);
-      i.addEventListener("click", (e) => { this.close(); });
-
+      
       // form
-      var f = this.main.domElement("form", "addmanifest", {"name":"addmanifest"}, this.ui.panel);
+      var f = this.main.domElement("form", "addmanifest", {"name":"addmanifest"}, head);
       f.addEventListener("submit", (e) => {
         e.preventDefault();
         this.addManifest();
       });
       this.ui.manifest = this.main.domElement("input", null, {"type":"text"}, f);
       var i = this.main.domElement("input", null, {"type":"submit","value":"Go"}, f);
+      
+      var a = this.main.domElement("a", null, {"href":"#"}, head);
+      var i = this.main.domElement("img", null, {"src": close,"onclick":"close"}, a);
+      i.addEventListener("click", (e) => { this.close(); });
+
+
       
       this.ui.panelcontent = this.main.domElement("div", "navpanelcontent", {"class":"navpanel-content"}, this.ui.panel);
       var gc = this.main.domElement("div", "gallerycontainer", {}, this.ui.panelcontent);
@@ -65,8 +69,7 @@ export default class Nav {
               this.main.manifest = manifest;
               this.main.manifestData = this.main.manifests[manifest];
               this.main.load();
-              this.main.nav.mode = "view";
-              this.main.nav.toggleSaveEdit();
+              this.main.sidebar.setMode('view');
               this.close();
             });
 
