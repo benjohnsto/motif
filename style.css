@@ -6,8 +6,8 @@
 
 .panel { 
   position: absolute;
-  right: -320px;
-  width: 320px;
+  right: -30%;
+  width: 30%;
   top:0;
   bottom:0;
   transition: right 1s;
