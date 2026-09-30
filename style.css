@@ -76,6 +76,10 @@
   margin:auto;
   box-shadow:0 0 5px #444;
 }
+ .tile.active img { 
+  border: solid 2px red;
+ } 
+.tile.active {}
 
 .counter {
   position: absolute;
