@@ -5,5 +5,8 @@
 injected values can be:
 
 creator
-generator
-audience
+course
+institution
+assignment
+
+
