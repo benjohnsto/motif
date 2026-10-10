@@ -33,6 +33,10 @@ class Motif {
         
         if(config.showNav) { this.showNav = true; }
         if(config.annotation.adapter) { this.adapter = config.annotation.adapter; }
+        if(config.annotation.creator) { this.creator = config.annotation.creator; }
+        if(config.annotation.institution) { this.institution = config.annotation.institution; }
+        if(config.annotation.course) { this.course = config.annotation.course; }
+        if(config.annotation.assignment) { this.assignment = config.annotation.assignment; }
         
         this.viewer = new Viewer(this);
         this.strip = new Strip(this);
@@ -174,7 +178,6 @@ async parse(url) {
     if (manifestobj.isCollection()) {
       this.type = 'collection';
       this.showNav = true;
-      console.log(this);
       this.collection = {
         'id': manifestobj.id,
         'label': manifestobj.getLabel() ? manifestobj.getLabel().getValue() : 'Untitled Collection'
@@ -197,7 +200,7 @@ async parse(url) {
 
       const canvases = sequences[0].getCanvases();
       const obj = {
-        'id': manifestobj.id,
+        'id': url,//manifestobj.id,
         'label': manifestobj.getDefaultLabel(),
         'thumb': canvases[0] ? canvases[0].getCanonicalImageUri(200) : '',
         'meta': manifestobj.getMetadata(),
@@ -222,7 +225,7 @@ async parse(url) {
         obj.thumb = obj.items[0].thumb;
       }
       
-      console.log(obj);
+      //console.log(obj);
       
       this.manifestData = obj;
       this.manifests[url] = obj;
@@ -247,8 +250,6 @@ async parse(url) {
       }
       
       setStage() {
-        console.log(this.manifest);
-        console.log(this.manifestData);
         this.strip.draw();
         this.nav.draw();
         this.viewer.open(this.manifestData.items[0]);

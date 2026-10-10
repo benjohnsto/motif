@@ -18,14 +18,25 @@ export default class Viewer {
         this.overlayOn = false;
         this.mode = 'view';        
         this.annotationTemplate = {
-	    "@context": "http://www.w3.org/ns/anno.jsonld",
+	    "@context": ["http://www.w3.org/ns/anno.jsonld",
+	    {
+               "lti": "https://purl.imsglobal.org/spec/lti/claim/",
+               "canvas": "https://canvas.instructure.com/lti/",
+               "institution": {
+                  "@id": "lti:tool_platform",
+                  "@type": "@id"
+               },
+               "course": {
+                  "@id": "lti:context",
+                  "@type": "@id"
+               },
+               "assignment": {
+                  "@id": "lti:resource_link",
+                  "@type": "@id"
+               }
+            }],
 	    "id": "",
 	    "type": "Annotation",
-	    "creator": "",
-	    "created": "",
-	    "institution": "",
-	    "course": "",
-	    "project": "",
 	    "body": [
 	      {
 		"type": "TextualBody",
@@ -174,8 +185,9 @@ export default class Viewer {
     
     
     open(item) {
+
       this.currentItem = item;
-      this.main.viewer.setAnnotations(item.canvas);
+      this.setAnnotations(item.canvas);
       this.osd.open(item.service + "/info.json");
       this.main.sidebar.close();
       this.main.strip.highlight(item.canvas);
@@ -217,6 +229,14 @@ export default class Viewer {
         this.osd.setMouseNavEnabled(false);
         this.annotation = structuredClone(this.annotationTemplate);
         this.annotation.id = this.makeid();
+        if(this.main.creator) { 
+          this.annotation.creator = this.main.creator;
+          const now = new Date();
+          this.annotation.created = now.toUTCString();
+        }
+        if(this.main.institution) { this.annotation.institution = this.main.institution; }
+        if(this.main.course) { this.annotation.course = this.main.course; }
+        if(this.main.assignment) { this.annotation.assignment = this.main.assignment; }
       }
     }
 
@@ -251,6 +271,7 @@ export default class Viewer {
         var id = anno.id;
         var region = anno.target.selector.value.replace('xywh=pixel:','').replace('xywh=','').split(',').map((x)=>{return parseInt(x)});
         var overlayElement = document.createElement("div");
+        
         overlayElement.setAttribute("href","#");
         overlayElement.addEventListener('mouseover', (e) => {  });
         overlayElement.addEventListener('mouseleave', (e) => {  });    
@@ -300,16 +321,16 @@ export default class Viewer {
     * 
     ***********************/
     async setAnnotations(canvas) {
-  
-
+    
       if(this.main.adapter.endpoint) {
         //this.osd.clearOverlays();
-        
+
 	try {
 
              if(this.main.adapter) {
 
-              this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
+              this.main.adapter.annotationPageId = canvas;
+
               this.annotationPage = await this.main.adapter.get();
 
               if(this.annotationPage) {
@@ -422,13 +443,8 @@ export default class Viewer {
     
     
     handleRelease(event) {
-
-            this.annotation.creator = "Ben Johnston";
+            if(this.main.creator) { this.annotation.creator = this.main.creator; }
             this.annotation.created = new Date().toISOString();
-            this.annotation.institution = "Princeton";
-            this.annotation.course = "ART 200, Fall 2026";
-            this.annotation.project = "Test 1";
-
             this.overlay.classList.add('highlight');
             
             this.main.sidebar.create();

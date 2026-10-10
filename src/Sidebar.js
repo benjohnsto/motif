@@ -110,7 +110,7 @@ export default class Sidebar {
          v.classList.add('split');
          var p = document.getElementById(`${this.main.divId}_panel`);
          p.classList.add('split');
-         //document.getElementById("annoText").focus();  
+         //document.getElementById("annoText").focus(); 
     }
     
     
@@ -245,18 +245,18 @@ export default class Sidebar {
               }
           }
 
-
-          if(id == "") {
+          
+          
+          if(id != "") {
              if(this.main.adapter) {
-              this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
-              await this.main.adapter.create(this.main.viewer.annotation);
+              var annotation = this.main.viewer.annotationPage.items.filter((i)=> {return i.id == id})[0];
+              //this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
+              await this.main.adapter.update(annotation);
              }
           }
           else {
-             if(this.main.adapter) {
-              this.main.adapter.annotationPageId = this.main.viewer.currentItem.canvas;
-              await this.main.adapter.update(this.main.viewer.annotation);
-             }
+             var annotation = this.main.viewer.annotation;
+             await this.main.adapter.create(annotation);
           }
 
 	  this.main.sidebar.close();

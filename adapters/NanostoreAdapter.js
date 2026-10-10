@@ -1,5 +1,8 @@
 class NanostoreAdapter {
 
+
+
+
   constructor(annotationPageId, endpoint) {
     this.annotationPageId = annotationPageId;
     this.endpoint = endpoint;
@@ -7,9 +10,15 @@ class NanostoreAdapter {
 
 
   async get() {
-    const annotationPage = await this.all();
-    if (annotationPage) {
-      return annotationPage;
+    const annotations = await this.all();
+    if (annotations) {
+      console.log(annotations);
+      return {
+	   id: this.annotationPageId,
+	   type: 'AnnotationPage',
+	   items: annotations
+	   };
+
     }
     return null;
   }
@@ -31,35 +40,32 @@ class NanostoreAdapter {
   
   
   async update(annotation) {
-    const annotationPage = await this.all();
-    if (annotationPage) {
-      const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
-      annotationPage.items.splice(currentIndex, 1, annotation);
-      return fetch(`${this.endpoint}/update`, {
-        body: JSON.stringify(annotationPage),
-          headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        method: 'PUT',
-      }).catch(() => this.all());
-
-    }
-    return null;
-  }
-  
-
-
-  async remove(annoId) {
-    console.log('delete annotation');
-    return fetch(`${this.endpoint}/delete`, {
+    console.log('update annotation');
+    return fetch(`${this.endpoint}/update`, {
       body: JSON.stringify(annotation),
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      method: 'POST',
-      body: JSON.stringify("id",annoId)
+      method: 'PUT',
+    }).catch(() => this.all());
+  }
+  
+
+
+  async remove(annoId) {
+    annoId = annoId.split('/');
+    annoId = annoId[annoId.length-1];
+    return fetch(`${this.endpoint}/delete`, {
+      body: JSON.stringify({"@id": annoId}),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'DELETE'
+    }).then((data)=>{
+      return this.get();
+      
     }).catch(() => this.all());
   }
   
@@ -87,3 +93,4 @@ class NanostoreAdapter {
   }
 
 }
+

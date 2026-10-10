@@ -15,21 +15,53 @@
 
 <script src="dist/motif.js?v=2"></script>
 <script src="adapters/LocalStorageAdapter.js"></script>
+<script src="adapters/NanostoreAdapter.js"></script>
 <script>
 //https://data.artmuseum.princeton.edu/iiif/objects/32499
 //https://figgy.princeton.edu/concern/scanned_resources/b592d95a-6c86-47ee-bec4-643e1f0cb1eb/manifest
 //https://localhost/mixtape/136/manifest
 
+/*
   var c = new Motif({
     'id':'myviewer',
     'mode': 'edit',
-    'manifest': 'https://collections.library.yale.edu/manifests/16986907',
+    'manifest': 'https://tripleyefish.com/mixtape/53/manifest',
     'showNav': true,
     'annotation': {
-      "adapter": new LocalStorageAdapter('', 'http://localhost/nanostore3')
+      "adapter": new LocalStorageAdapter('', 'http://localhost/nanostore3'),
+      'creator': { "id": "jj1234", "name": "Johnny Jones" }
     }    
   });
-  
+*/
+
+	  var c = new Motif({
+	    'id':'myviewer',
+	    'mode': 'edit',
+	    'manifest': 'https://collections.library.yale.edu/manifests/10971530',
+	    'showNav': false,
+	    'annotation': {
+	      "adapter": new NanostoreAdapter('','http://localhost/nanostore_rerum2'),
+	      "creator": {
+		    "id": "http://example.org/user1",
+		    "type": "Person",
+		    "name": "My Pseudonym"
+		  },
+	      "institution": {
+		    "id": "http://www.myinstitution.edu/",
+		    "type": "Institution",
+		    "name": "My Institution"
+		  },
+	      "course": {
+		    "id": "http://institutionallms.edu/123456",
+		    "type": "Course",
+		    "name": "ART 100, Fall 2026"
+		  },
+              "assignment": {
+		    "id": "http://institutionallms.edu/123456/assignment1",
+		    "type": "Week 2 Visual Cutlure Exercise"
+		  }
+	    }    
+	  });  
   function doit() {
     c.load("https://figgy.princeton.edu/concern/scanned_resources/5d41d7fd-93d4-4140-b079-9abf98ef9aa7/manifest");
   }

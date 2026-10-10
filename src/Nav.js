@@ -66,9 +66,7 @@ export default class Nav {
             this.main.domElement("img", null, {"src":this.main.manifests[i].thumb}, a);
             a.addEventListener("click", (event) => { 
               var manifest = event.currentTarget.getAttribute('data-id');
-              this.main.manifest = manifest;
-              this.main.manifestData = this.main.manifests[manifest];
-              this.main.load();
+              this.main.load(manifest);
               this.main.sidebar.setMode('view');
               this.close();
             });
